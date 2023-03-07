@@ -142,7 +142,7 @@ function NewsItem(newsItem) {
     </div>;
 }
 
-export async function getServerSideProps(prop) {
+export async function getStaticProps(prop) {
 
   const client = new ApolloClient({
     uri: graphQLUrl(),
