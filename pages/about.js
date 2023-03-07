@@ -63,7 +63,7 @@ function Member(member) {
   </div>
 }
 
-export async function getStaticProps(prop) {
+export async function getServerSideProps(prop) {
 
   const client = new ApolloClient({
     uri: graphQLUrl(),
