@@ -1,4 +1,4 @@
-import { ApolloClient, InMemoryCache, gql } from '@apollo/client'
+import { ApolloClient, InMemoryCache, gql } from "@apollo/client";
 import Head from "next/head";
 import Image from "next/image";
 import moment from "moment";
@@ -6,16 +6,122 @@ import { Inter } from "next/font/google";
 import styles from "@/styles/Home.module.css";
 import { Nav } from "../components/Nav";
 import { Footer } from "../components/Footer";
+import { useState } from "react";
+import "react-responsive-carousel/lib/styles/carousel.min.css"; // requires a loader
+import { Carousel } from "react-responsive-carousel";
 
+import MultiCarousel from "react-multi-carousel";
+import "react-multi-carousel/lib/styles.css";
 const inter = Inter({ subsets: ["latin"] });
 
+import { graphQLUrl, backendURL } from "../functions/functions";
 
-import {graphQLUrl} from '../functions/functions'
+import { useRouter } from "next/router";
 
+const responsive = {
+  superLargeDesktop: {
+    // the naming can be any, depends on you.
+    breakpoint: { max: 4000, min: 3000 },
+    items: 5,
+  },
+  desktop: {
+    breakpoint: { max: 3000, min: 1024 },
+    items: 3,
+  },
+  tablet: {
+    breakpoint: { max: 1024, min: 464 },
+    items: 2,
+  },
+  mobile: {
+    breakpoint: { max: 464, min: 0 },
+    items: 1,
+  },
+};
 
-export default function Home({data}) {
+const responsiveSlider = {
+  superLargeDesktop: {
+    // the naming can be any, depends on you.
+    breakpoint: { max: 4000, min: 3000 },
+    items: 1,
+  },
+  desktop: {
+    breakpoint: { max: 3000, min: 1024 },
+    items: 1,
+  },
+  tablet: {
+    breakpoint: { max: 1024, min: 464 },
+    items: 1,
+  },
+  mobile: {
+    breakpoint: { max: 464, min: 0 },
+    items: 1,
+  },
+};
 
-  // console.log( data.news.data[0].image.src)
+export default function Home({ data }) {
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 3;
+
+  const { locale } = useRouter();
+
+  const [state, setState] = useState({
+    fullName: "",
+    email: "",
+    message: "",
+  });
+  const [showThanks, setShowThanks] = useState(false);
+
+  const [emailError, setEmailError] = useState(false);
+  const [fullNameError, setFullNameError] = useState(false);
+  const [messageError, setMessageError] = useState(false);
+
+  const handleChange = (e) => {
+    setState(() => {
+      console.log(e.target.id, e.target.value);
+      return {
+        ...state,
+        [e.target.id]: e.target.value,
+      };
+    });
+  };
+  const handleSubmit = () => {
+    const { email, fullName, message } = state;
+    setEmailError(email == "");
+    setFullNameError(fullName == "");
+    setMessageError(message == "");
+
+    // country & jobTitle & subject
+    if (email && fullName && message) {
+      axios
+        .post(
+          `${backendURL()}/!/forms/contact_us`,
+          {
+            full_name: fullName,
+            email: email,
+            message: message,
+          },
+          {
+            headers: {
+              "X-Requested-With": "XMLHttpRequest",
+            },
+          }
+        )
+        .then(function (response) {
+          if (response.data.success) {
+            setShowThanks(true);
+            setState({
+              email: "",
+              fullName: "",
+              message: "",
+            });
+          } else {
+            alert("Form could not submitted");
+          }
+        })
+        .catch(function (error) {});
+    }
+  };
+
   return (
     <>
       <Head>
@@ -32,63 +138,238 @@ export default function Home({data}) {
             </div>
             <div>
               <div className="container px-8 py-5 lg:py-8 mx-auto xl:px-5 max-w-screen-lg">
-                <div className="grid gap-10 lg:gap-10 md:grid-cols-2 ">
-                  <div className="cursor-pointer group">
-                    <div className="relative overflow-hidden transition-all bg-gray-100 rounded-md dark:bg-gray-800   hover:scale-105 aspect-video">
-                      <a href="/post/architectural-engineering-wonders-of-the-modern-era-for-your-inspiration">
-                        <span>
-                          <img
-                            alt="Thumbnail"
-                            sizes="80vw"
-             
-                            src={data.entry.hero_image.src}
-                            decoding="async"
-                            data-nimg="fill"
-                            className="transition-all"
-                          
-                          />
-                          <noscript />
+                {/* <div className="grid gap-10 lg:gap-10 md:grid-cols-2"> */}
+                <div className="">
+                  <MultiCarousel showDots={true} responsive={responsiveSlider}>
+                    <div className="cursor-pointer group">
+                      <div className="relative overflow-hidden transition-all bg-gray-100 rounded-md dark:bg-gray-800   hover:scale-105 aspect-video">
+                        <div>
+                          <span>
+                            <img
+                              alt="Thumbnail"
+                              sizes=""
+                              src={data.entry.hero_image.src}
+                              decoding="async"
+                              data-nimg="fill"
+                              className="transition-all w-full"
+                            />
+                            <noscript />
+                          </span>
+                        </div>
+                      </div>
+
+                      <h2 className="mt-2 text-lg font-semibold tracking-normal text-brand-primary dark:text-white">
+                        <span className=" bg-gradient-to-r from-green-200 to-green-100 dark:from-purple-800 dark:to-purple-900 bg-[length:0px_10px] bg-left-bottom bg-no-repeat transition-[background-size] duration-500 hover:bg-[length:100%_3px] group-hover:bg-[length:100%_10px]">
+                          {data.entry.image_title}
                         </span>
-                      </a>
+                      </h2>
                     </div>
-                  
-                    <h2 className="mt-2 text-lg font-semibold tracking-normal text-brand-primary dark:text-white">
-                      <span className=" bg-gradient-to-r from-green-200 to-green-100 dark:from-purple-800 dark:to-purple-900 bg-[length:0px_10px] bg-left-bottom bg-no-repeat transition-[background-size] duration-500 hover:bg-[length:100%_3px] group-hover:bg-[length:100%_10px]">
-                       {data.entry.image_title}
-                      </span>
-                    </h2>
-                    
-                    
-                  </div>
-                  <div className="cursor-pointer group">
-                    <div className="relative overflow-hidden transition-all bg-gray-100 rounded-md dark:bg-gray-800   hover:scale-105 aspect-video">
-                      <a href="/post/5-effective-brain-recharging-activities-no-one-is-talking-about">
-                        <span>
-                          <img
+
+                    <div className="cursor-pointer group">
+                      <div className="relative overflow-hidden transition-all bg-gray-100 rounded-md dark:bg-gray-800   hover:scale-105 aspect-video">
+                        <div>
+                          <span>
+                            {/* <img
                             alt="Graphics"
                             sizes="80vw"
-                
                             src={data.entry.hero_video.src}
                             decoding="async"
                             data-nimg="fill"
-                            className="transition-all"
-                          />
-                          <noscript />
+                            className="transition-all  w-full"
+                          /> */}
+
+                            <video
+                              className="w-full"
+                              controls
+                              autoplay
+                              src={backendURL() + data.entry.hero_video.url}
+                            ></video>
+                          </span>
+                        </div>
+                      </div>
+
+                      <h2 className="mt-2 text-lg font-semibold tracking-normal text-brand-primary dark:text-white">
+                        <span className=" bg-gradient-to-r from-green-200 to-green-100 dark:from-purple-800 dark:to-purple-900 bg-[length:0px_10px] bg-left-bottom bg-no-repeat transition-[background-size] duration-500 hover:bg-[length:100%_3px] group-hover:bg-[length:100%_10px]">
+                          {data.entry.video_title}
                         </span>
-                      </a>
+                      </h2>
                     </div>
-      
-                    <h2 className="mt-2 text-lg font-semibold tracking-normal text-brand-primary dark:text-white">
-                      <span className=" bg-gradient-to-r from-green-200 to-green-100 dark:from-purple-800 dark:to-purple-900 bg-[length:0px_10px] bg-left-bottom bg-no-repeat transition-[background-size] duration-500 hover:bg-[length:100%_3px] group-hover:bg-[length:100%_10px]">
-                      {data.entry.video_title}
-                      </span>
-                    </h2>
-                  
-      
-                  </div>
+                  </MultiCarousel>
                 </div>
-                <div className="grid gap-10 mt-10 lg:gap-10 md:grid-cols-2 xl:grid-cols-3 border-t border-gray-100 dark:border-gray-800 pt-10">
-                { data.news.data.map( n => <NewsItem news={n} />)}
+                <h2 className=" mt-10 text-center text-4xl text-white">
+                  News Carousel
+                </h2>
+
+                <div className="mt-10">
+                  <MultiCarousel
+                    showDots={true}
+                    itemClass="carousel-item-padding-40-px"
+                    responsive={responsive}
+                  >
+                    {data.news.data.map((n) => (
+                      <NewsItem news={n} />
+                    ))}
+                  </MultiCarousel>
+                </div>
+
+                <div>
+                  <div className="grid my-10 md:grid-cols-2">
+                    <div className="my-10">
+                      {locale == "en" ? (
+                        <h2 className="text-2xl font-semibold dark:text-white">
+                          Contact US
+                        </h2>
+                      ) : (
+                        <h2 className="text-2xl font-semibold dark:text-white">
+                          تواصل معنا
+                        </h2>
+                      )}
+
+                      <p className="max-w-sm mt-5">
+                        Have something to say? We are here to help. Fill up the
+                        form or send email or call phone.
+                      </p>
+                      <div className="mt-5">
+                        <div className="flex items-center mt-2 space-x-2 text-dark-600 dark:text-gray-400">
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            strokeWidth={2}
+                            stroke="currentColor"
+                            aria-hidden="true"
+                            className="w-4 h-4"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                            />
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                            />
+                          </svg>
+                          <span>1734 Sanfransico, CA 93063</span>
+                        </div>
+                        <div className="flex items-center mt-2 space-x-2 text-dark-600 dark:text-gray-400">
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            strokeWidth={2}
+                            stroke="currentColor"
+                            aria-hidden="true"
+                            className="w-4 h-4"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                            />
+                          </svg>
+                          <a href="mailto:">hello@domain.com</a>
+                        </div>
+                        <div className="flex items-center mt-2 space-x-2 text-dark-600 dark:text-gray-400">
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            strokeWidth={2}
+                            stroke="currentColor"
+                            aria-hidden="true"
+                            className="w-4 h-4"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
+                            />
+                          </svg>
+                          <a href="tel:+1 (987) 4587 899">+1 (987) 4587 899</a>
+                        </div>
+                      </div>
+                    </div>
+                    <div>
+                      {showThanks ? (
+                        <div>
+                          <h1 className="mt-10 xl:text-3xl medium-font text-grey text-xl text-center">
+                            Thanks
+                          </h1>
+                          <p className="text-lg light-font text-grey mt-2 text-center">
+                            We will talk
+                          </p>
+                        </div>
+                      ) : (
+                        <form
+                          onSubmit={(e) => {
+                            e.preventDefault();
+                          }}
+                          className="my-10"
+                        >
+                          <input
+                            type="checkbox"
+                            id
+                            className="hidden"
+                            name="botcheck"
+                            style={{ display: "none" }}
+                          />
+                          <div className="mb-5">
+                            <input
+                              onChange={handleChange}
+                              id="fullName"
+                              type="text"
+                              placeholder="Full Name"
+                              autoComplete="false"
+                              className="w-full px-4 py-3 border-2 placeholder:text-gray-800 dark:text-white rounded-md outline-none dark:placeholder:text-gray-200 dark:bg-gray-900   focus:ring-4  border-gray-300 focus:border-gray-600 ring-gray-100 dark:border-gray-600 dark:focus:border-white dark:ring-0"
+                              name="fullName"
+                            />
+                            {fullNameError && (
+                              <span className="">Enter Name</span>
+                            )}
+                          </div>
+                          <div className="mb-5">
+                            <label htmlFor="email_address" className="sr-only">
+                              Email Address
+                            </label>
+                            <input
+                              onChange={handleChange}
+                              id="email"
+                              type="email"
+                              placeholder="Email Address"
+                              name="email"
+                              autoComplete="false"
+                              className="w-full px-4 py-3 border-2 placeholder:text-gray-800 dark:text-white rounded-md outline-none dark:placeholder:text-gray-200 dark:bg-gray-900   focus:ring-4  border-gray-300 focus:border-gray-600 ring-gray-100 dark:border-gray-600 dark:focus:border-white dark:ring-0"
+                            />
+                            {emailError && (
+                              <span className="">Enter Email Address</span>
+                            )}
+                          </div>
+                          <div className="mb-3">
+                            <textarea
+                              onChange={handleChange}
+                              name="message"
+                              placeholder="Your Message"
+                              id="message"
+                              className="w-full px-4 py-3 border-2 placeholder:text-gray-800 dark:text-white dark:placeholder:text-gray-200 dark:bg-gray-900   rounded-md outline-none  h-36 focus:ring-4  border-gray-300 focus:border-gray-600 ring-gray-100 dark:border-gray-600 dark:focus:border-white dark:ring-0"
+                              defaultValue={""}
+                            />
+                            {messageError && (
+                              <span className="">Enter Message</span>
+                            )}
+                          </div>
+                          <button
+                            onClick={handleSubmit}
+                            type="submit"
+                            className="w-full py-4 font-semibold text-white transition-colors bg-gray-900 rounded-md hover:bg-gray-800 focus:outline-none focus:ring-offset-2 focus:ring focus:ring-gray-200 px-7 dark:bg-white dark:text-black "
+                          >
+                            Send Message
+                          </button>
+                        </form>
+                      )}
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -100,9 +381,9 @@ export default function Home({data}) {
   );
 }
 
-
 function NewsItem(newsItem) {
-  return  <div className="cursor-pointer group">
+  return (
+    <div className="cursor-pointer group">
       <div className="relative overflow-hidden transition-all bg-gray-100 rounded-md dark:bg-gray-800   hover:scale-105 aspect-square">
         <a href={`news/${newsItem.news.slug}`}>
           <span>
@@ -112,7 +393,8 @@ function NewsItem(newsItem) {
               decoding="async"
               data-nimg="fill"
               className="transition-all"
-              sizes="80vw" />
+              sizes="80vw"
+            />
             <noscript />
           </span>
         </a>
@@ -123,7 +405,6 @@ function NewsItem(newsItem) {
             {newsItem.news.category.value}
           </span>
         </a>
-
       </div>
       <h2 className="mt-2 text-lg font-semibold tracking-normal text-brand-primary dark:text-white">
         <span className=" bg-gradient-to-r from-green-200 to-green-100 dark:from-purple-800 dark:to-purple-900 bg-[length:0px_10px] bg-left-bottom bg-no-repeat transition-[background-size] duration-500 hover:bg-[length:100%_3px] group-hover:bg-[length:100%_10px]">
@@ -132,76 +413,71 @@ function NewsItem(newsItem) {
       </h2>
 
       <div className="flex items-center mt-3 space-x-3 text-gray-500 dark:text-gray-400">
-
-        <time
-          className="text-sm">
-         {/* {newsItem.news.date} */}
-         {moment(newsItem.news.date).calendar()}
+        <time className="text-sm">
+          {/* {newsItem.news.date} */}
+          {moment(newsItem.news.date).calendar()}
         </time>
       </div>
-    </div>;
+    </div>
+  );
 }
 
 export async function getStaticProps(prop) {
-
   const client = new ApolloClient({
     uri: graphQLUrl(),
-    cache: new InMemoryCache()
+    cache: new InMemoryCache(),
   });
-  
-  
+
   const { data } = await client.query({
-    query: gql`query home {
-      entry(id: "home") {
-        id
-        title
-        ... on Entry_Pages_Home {
-          video_title
-          hero_video {
-            url
-            permalink
-            src(width: 472, height: 277)
-          }
-          image_title
-          hero_image {
-            url
-            permalink
-            src(width: 472, height: 277)
-          }
-        }
-      }
-      news: entries(collection: "news", limit: 12) {
-        total
-        current_page
-        per_page
-        data {
+    query: gql`
+      query home {
+        entry(id: "home") {
+          id
           title
-          ... on Entry_News_News {
-            slug
-            title
-            category {
-              value
-            }
-            image {
+          ... on Entry_Pages_Home {
+            video_title
+            hero_video {
               url
               permalink
-              src(width: 301, height: 357)
+              extension
             }
-            description
-            date
+            image_title
+            hero_image {
+              url
+              permalink
+              src(width: 472, height: 277)
+            }
+          }
+        }
+        news: entries(collection: "news", limit: 12) {
+          total
+          current_page
+          per_page
+          data {
+            title
+            ... on Entry_News_News {
+              slug
+              title
+              category {
+                value
+              }
+              image {
+                url
+                permalink
+                src(width: 301, height: 357)
+              }
+              description
+              date
+            }
           }
         }
       }
-    }
-        
-    `
+    `,
   });
 
   return {
-    props : {
+    props: {
       data: data,
-    }
-  }
-
-
+    },
+  };
 }
