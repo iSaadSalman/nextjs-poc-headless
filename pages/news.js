@@ -24,7 +24,6 @@ export default function Home({ data }) {
  
   const onPageChange = (page) => {
 
-    console.log( page )
     setCurrentPage(page);
   };
 

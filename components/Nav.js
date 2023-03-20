@@ -18,9 +18,8 @@ export function Nav() {
 
   const { locale } = useRouter()
 
-  console.log(locale)
   return (
-    <nav>
+    <nav style={{direction: locale == "en" ? "ltr" : "rtl"}}>
       <div className="flex flex-wrap justify-between md:gap-10 md:flex-nowrap">
         <div className="flex-col items-center justify-start order-1 hidden w-full md:flex md:flex-row md:justify-end md:w-auto md:order-none md:flex-1">
           <a
