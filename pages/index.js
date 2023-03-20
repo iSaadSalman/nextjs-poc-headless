@@ -10,8 +10,14 @@ import { useState } from "react";
 import "react-responsive-carousel/lib/styles/carousel.min.css"; // requires a loader
 import { Carousel } from "react-responsive-carousel";
 
+import axios from 'axios'
+
+
 import MultiCarousel from "react-multi-carousel";
 import "react-multi-carousel/lib/styles.css";
+
+
+
 const inter = Inter({ subsets: ["latin"] });
 
 import { graphQLUrl, backendURL } from "../functions/functions";

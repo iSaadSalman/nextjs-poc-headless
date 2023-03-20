@@ -6,7 +6,7 @@ const nextConfig = {
     defaultLocale: 'en',
   },
   images: {
-    domains: ['127.0.0.1:8000', 'http://headlessbackend.brackets-tech.com'],
+    domains: ['127.0.0.1:8000', 'https://headlessbackend.brackets-tech.com'],
   },
 }
 
