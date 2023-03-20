@@ -107,9 +107,9 @@ export default function Home({ data }) {
             message: message,
           },
           {
-            headers: {
-              "X-Requested-With": "XMLHttpRequest",
-            },
+            // headers: {
+            //   "X-Requested-With": "XMLHttpRequest",
+            // },
           }
         )
         .then(function (response) {
