@@ -6,14 +6,17 @@ import { Inter } from "next/font/google";
 import styles from "@/styles/Home.module.css";
 import { Nav } from "../components/Nav";
 import { Footer } from "../components/Footer";
-import { useState } from "react";
+import { useState, useEffect  } from "react";
 import  Pagination  from "../components/Pagination";
+import { useRouter } from 'next/router';
 
 const inter = Inter({ subsets: ["latin"] });
 
 import { graphQLUrl } from "../functions/functions";
 
 export default function Home({ data }) {
+  const router = useRouter();
+
 
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 3;
@@ -21,9 +24,17 @@ export default function Home({ data }) {
 
   const paginatedPosts = paginate(data.news.data, currentPage, pageSize);
 
+  useEffect(() => {
+    const page = parseInt(router.query.page, 10) || 1;
+    setCurrentPage(page);
+  }, [router.query.page]);
  
   const onPageChange = (page) => {
 
+    router.push({
+      pathname: '/news/',
+      query: { page: page },
+    });
     setCurrentPage(page);
   };
 
@@ -135,7 +146,7 @@ export async function getStaticProps(prop) {
             }
           }
         }
-        news: entries(collection: "news", limit: 12) {
+        news: entries(collection: "news") {
           total
           current_page
           per_page

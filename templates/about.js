@@ -2,7 +2,7 @@ import { ApolloClient, InMemoryCache, gql } from '@apollo/client'
 import Head from 'next/head'
 import Image from 'next/image'
 import { Inter } from 'next/font/google'
-import styles from '@/styles/Home.module.css'
+import styles from '/styles/Home.module.css'
 import { Nav } from "../components/Nav";
 import { Footer } from "../components/Footer";
 const inter = Inter({ subsets: ['latin'] })
@@ -10,7 +10,10 @@ const inter = Inter({ subsets: ['latin'] })
 import {graphQLUrl} from '../functions/functions'
 
 
-export default function About({ data}) {
+export default function About( {data}) {
+
+  console.log( data )
+
   return (
     <>
       <Head>
@@ -23,25 +26,25 @@ export default function About({ data}) {
       <div className="antialiased text-gray-800 dark:bg-black dark:text-gray-400 flex flex-col min-h-screen">
   <div className="grow">
     <div className="container px-8 py-5 lg:py-8 mx-auto xl:px-5 max-w-screen-lg">
-     <Nav/>
     </div>
     <div>
       <div className="container px-8 py-5 lg:py-8 mx-auto xl:px-5 max-w-screen-lg">
         <h1
           className="mt-2 mb-3 text-3xl font-semibold tracking-tight text-center lg:leading-snug text-brand-primary lg:text-4xl dark:text-white">
-          { data.entry.title}</h1>
+          { data.data.entry.title}
+          </h1>
         <div className="text-center">
-          <p className="text-lg">{ data.entry.intro_text}</p>
+          <p className="text-lg">{ data.data.entry.intro_text}</p>
         </div>
         <div className="grid grid-cols-3 gap-5 mt-6 mb-16 md:mt-16 md:mb-32 md:gap-16">
           {}
-          { data.entry.team_members.map( member =><Member member={member}/>)}
+          { data.data.entry.team_members.map( member =><Member member={member}/>)}
         </div>
         
       </div>
     </div>
   </div>
-  <Footer/>
+ 
 </div>
 
       </main>

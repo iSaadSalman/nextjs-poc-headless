@@ -21,27 +21,7 @@ export function Nav() {
   return (
     <nav style={{direction: locale == "en" ? "ltr" : "rtl"}}>
       <div className="flex flex-wrap justify-between md:gap-10 md:flex-nowrap">
-        <div className="flex-col items-center justify-start order-1 hidden w-full md:flex md:flex-row md:justify-end md:w-auto md:order-none md:flex-1">
-          <a
-            className="px-5 py-2 text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-blue-500"
-            href="/"
-          >
-            Home
-          </a>
-          <a
-            className="px-5 py-2 text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-blue-500"
-            href="/about"
-          >
-            About
-          </a>
-          <a
-            className="px-5 py-2 text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-blue-500"
-            href="/contact"
-          >
-            Contact
-          </a>
-        </div>
-        <div className="flex items-center justify-between w-full md:w-auto">
+      <div className="flex items-center justify-between w-full md:w-auto">
           <a className="w-28 dark:hidden" href="/">
             <span
               style={{
@@ -169,7 +149,27 @@ export function Nav() {
             </svg>
           </button>
         </div>
-        <div className="flex-col items-center justify-start order-2 hidden w-full md:flex md:flex-row md:w-auto md:flex-1 md:order-none">
+
+        <div className="flex-col items-center justify-start order-1 hidden w-full md:flex md:flex-row md:justify-end md:w-auto md:order-none md:flex-1">
+          <a
+            className="px-5 py-2 text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-blue-500"
+            href="/"
+          >
+            Home
+          </a>
+          <a
+            className="px-5 py-2 text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-blue-500"
+            href="/about"
+          >
+            About
+          </a>
+          <a
+            className="px-5 py-2 text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-blue-500"
+            href="/contact"
+          >
+            Contact
+          </a>
+
           <a
             className="px-5 py-2 text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-blue-500"
             target
@@ -178,14 +178,7 @@ export function Nav() {
           >
             <span> News</span>
           </a>
-          <a
-            className="px-5 py-2 text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-blue-500"
-            target="_blank"
-            rel="noopener"
-            href=""
-          >
-            <span> Link 2</span>
-          </a>
+  
 
           { locale   == 'en' ? <a
             className="px-5 py-2 text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-blue-500"
@@ -198,8 +191,9 @@ export function Nav() {
           >
             <span> English</span>
           </a> }
-          
         </div>
+
+
       </div>
     </nav>
   );
