@@ -406,9 +406,12 @@ function NewsItem(newsItem) {
       </div>
       <div className="flex gap-3">
         <a href="/#">
-          <span className="inline-block mt-5 text-xs font-medium tracking-wider uppercase  text-blue-600">
-            {newsItem.news.category.value}
-          </span>
+          {newsItem.news.category && 
+           <span className="inline-block mt-5 text-xs font-medium tracking-wider uppercase  text-blue-600">
+           {newsItem.news.category.value}
+         </span>
+          }
+         
         </a>
       </div>
       <h2 className="mt-2 text-lg font-semibold tracking-normal text-brand-primary dark:text-white">
