@@ -37,7 +37,9 @@ export default function Dynamic(data) {
                     </div>
 
                     <div className="container px-8 py-5 lg:py-8 mx-auto xl:px-5 max-w-screen-lg">
-                    {renderTemplate(data.data.entry.blueprint)}
+                      {data.data &&
+                    renderTemplate(data.data.entry.blueprint)
+                  }
                     </div>
                     <Footer />
                 </div>
@@ -58,17 +60,18 @@ export default function Dynamic(data) {
 
   const { data } = await client.query({
     query: gql`
-      query Query {
-            entries(collection: "pages") {
-              data {
-                blueprint
-                id
-                title
-                  locale
-                  slug
-            }
-        }
-      }`,
+    query Query {
+      entries(collection: "pages", filter:{locale: "default"}) {
+        data {
+          blueprint
+          id
+          locale
+          title
+            locale
+            slug
+      }
+  }
+}`,
     });
 
 
@@ -100,7 +103,7 @@ export async function getStaticProps( context ) {
     const { data } = await client.query({
         query: gql`
         query Query {
-          entry(slug: "${context.params.slug}") {
+          entry(slug: "${context.params.slug}", filter:{locale: "default"}) {
             id
             title
             blueprint
