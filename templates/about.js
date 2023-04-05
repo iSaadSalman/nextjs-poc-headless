@@ -12,7 +12,6 @@ import {graphQLUrl} from '../functions/functions'
 
 export default function About( {data}) {
 
-  console.log( data )
 
   return (
     <>

@@ -99,7 +99,7 @@ const [showThanks,setShowThanks] = useState(false )
         <div className="antialiased text-gray-800 dark:bg-black dark:text-gray-400 flex flex-col min-h-screen">
           <div className="grow">
             <div className="container px-8 py-5 lg:py-8 mx-auto xl:px-5 max-w-screen-lg">
-              {Nav()}
+              <Nav  />
             </div>
             <div>
               <div className="container px-8 py-5 lg:py-8 mx-auto xl:px-5 max-w-screen-lg">

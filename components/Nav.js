@@ -1,12 +1,17 @@
 import { useRouter } from "next/router";
+import { ApolloClient, InMemoryCache, gql } from "@apollo/client";
 
-export function Nav() {
+export function Nav( {links, links_ar} ) {
+
+  console.log( links, links_ar )
+
   const router = useRouter();
+
+  const { locale } = useRouter()
 
   const onChangeLanguage = (e) => {
     e.preventDefault()
 
-    // console.log( router.asPath, router.query)
     router
       .push(router.asPath, null, { locale: locale == 'en'? 'ar' : 'en' })
       .then(() => router.reload());
@@ -16,7 +21,42 @@ export function Nav() {
     return false
   };
 
-  const { locale } = useRouter()
+  const getCurrentLocaleForURL = () => {
+      return locale == 'en' ?  "" :  "/ar"
+  }
+
+  const drawDynamicLinks = () => {
+
+    if (links && locale == 'en') {
+      return links.map((link) => (
+
+          <a
+          key={link.page.title}
+          className="px-5 py-2 text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-blue-500"
+          href={ getCurrentLocaleForURL() + link.page.url}
+        >
+          {link.page.title}
+        </a>
+      ))
+    }  else if (links_ar && locale == 'ar') {
+      return links_ar.map((link) => (
+
+        <a
+        key={link.page.title}
+        className="px-5 py-2 text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-blue-500"
+        href={ getCurrentLocaleForURL() + link.page.url.replace('/arabic','')}
+      >
+        {link.page.title}
+      </a>
+    ))
+    
+    }else {
+      return null
+    }
+
+    
+  }
+
 
   return (
     <nav style={{direction: locale == "en" ? "ltr" : "rtl"}}>
@@ -151,21 +191,16 @@ export function Nav() {
         </div>
 
         <div className="flex-col items-center justify-start order-1 hidden w-full md:flex md:flex-row md:justify-end md:w-auto md:order-none md:flex-1">
-          <a
+          {/* <a
             className="px-5 py-2 text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-blue-500"
             href="/"
           >
             Home
-          </a>
+          </a> */}
+        {drawDynamicLinks()}     
           <a
             className="px-5 py-2 text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-blue-500"
-            href="/about"
-          >
-            About
-          </a>
-          <a
-            className="px-5 py-2 text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-blue-500"
-            href="/contact"
+            href={ getCurrentLocaleForURL() + "/contact"}
           >
             Contact
           </a>
@@ -174,7 +209,7 @@ export function Nav() {
             className="px-5 py-2 text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-blue-500"
             target
             rel
-            href="/news"
+            href={ getCurrentLocaleForURL() + "/news"}
           >
             <span> News</span>
           </a>
@@ -198,3 +233,99 @@ export function Nav() {
     </nav>
   );
 }
+
+// export async function getStaticProps() {
+//   const client = new ApolloClient({
+//         uri: graphQLUrl(),
+//         cache: new InMemoryCache(),
+//       });
+
+//   const { data } = await client.query({
+//     query: gql`
+//     query NavigationQuery {
+//       nav(handle: "main_nav") {
+//         handle
+//         title
+//         tree {
+//           page {
+//             title
+//             url
+//           }
+//         }
+//       }
+//     }`,
+//   });
+
+//   return {
+//     props: {
+//       links: data.nav.tree,
+//     },
+//   };
+// }
+
+
+
+// export async function getStaticProps(prop) {
+  
+//   const client = new ApolloClient({
+//     uri: graphQLUrl(),
+//     cache: new InMemoryCache(),
+//   });
+
+//   const { data } = await client.query({
+//     query: gql`
+//     query NavigationQuery {
+//       nav(handle: "main_nav") {
+//         handle
+//         title
+//         tree {
+//           page {
+//             title
+//             url
+//           }
+//         }
+//       }
+//     }
+    
+//     `,
+//   });
+
+//   return {
+//     props: {
+//       data: data,
+//     },
+//   };
+// }
+
+
+// export default withStaticProps(async () => {
+//   const client = new ApolloClient({
+//     uri: graphQLUrl(),
+//     cache: new InMemoryCache(),
+//   });
+
+//   const { data } = await client.query({
+//     query: gql`
+//     query NavigationQuery {
+//       nav(handle: "main_nav") {
+//         handle
+//         title
+//         tree {
+//           page {
+//             title
+//             url
+//           }
+//         }
+//       }
+//     }
+    
+//     `,
+//   });
+
+//   return {
+//     props: {
+//       data: data,
+//     },
+//   };
+// })(Nav);
+

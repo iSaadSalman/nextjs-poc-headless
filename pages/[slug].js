@@ -10,15 +10,15 @@ import Contact from "./contact"
 
 export default function Dynamic(data) {
 
-  console.log( data )
+
   const renderTemplate = (template) => {
+
 
       if (template == 'about_blueprint') {
 
         return <About data={data} />
-        return "about template"
       } else {
-        return <h1>common template</h1>
+        return <h1 className="text-center text-white text-5xl -mt-96">{ data.data.entry.title }</h1>
       }
   };
     return (<>
@@ -32,7 +32,7 @@ export default function Dynamic(data) {
                 <div className="antialiased text-gray-800 dark:bg-black dark:text-gray-400 flex flex-col min-h-screen">
                     <div className="grow">
                         <div className="container px-8 py-5 lg:py-8 mx-auto xl:px-5 max-w-screen-lg">
-                            <Nav />
+                            <Nav links={data.links} links_ar={data.links_ar} />
                         </div>
                     </div>
 
@@ -61,7 +61,7 @@ export default function Dynamic(data) {
   const { data } = await client.query({
     query: gql`
     query Query {
-      entries(collection: "pages", filter:{locale: "default"}) {
+      entries(collection: "pages") {
         data {
           blueprint
           id
@@ -70,6 +70,7 @@ export default function Dynamic(data) {
             locale
             slug
       }
+      
   }
 }`,
     });
@@ -103,13 +104,35 @@ export async function getStaticProps( context ) {
     const { data } = await client.query({
         query: gql`
         query Query {
-          entry(slug: "${context.params.slug}", filter:{locale: "default"}) {
+          entry(slug: "${context.params.slug}") {
             id
             title
             blueprint
             slug
+            locale
             ... on Entry_Pages_AboutBlueprint {
               ...AboutBlueprintFields
+            }
+          }
+          nav(handle: "main_nav") {
+            handle
+            title
+            tree {
+              page {
+                title
+                url
+              }
+            }
+          }
+          nav_ar:nav(handle: "main_nav") {
+            handle
+            title
+            tree(site: "arabic") {
+              page {
+                title
+                url
+                id
+              }
             }
           }
         }
@@ -134,6 +157,8 @@ export async function getStaticProps( context ) {
     return {
         props: {
           data: data,
+          links:  data.nav.tree,
+          links_ar:  data.nav_ar.tree,
         },
     };
  }

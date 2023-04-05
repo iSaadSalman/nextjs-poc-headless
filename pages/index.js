@@ -64,7 +64,7 @@ const responsiveSlider = {
   },
 };
 
-export default function Home({ data }) {
+export default function Home({ data, links , links_ar }) {
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 3;
 
@@ -83,7 +83,6 @@ export default function Home({ data }) {
 
   const handleChange = (e) => {
     setState(() => {
-      console.log(e.target.id, e.target.value);
       return {
         ...state,
         [e.target.id]: e.target.value,
@@ -139,7 +138,7 @@ export default function Home({ data }) {
         <div className="antialiased text-gray-800 dark:bg-black dark:text-gray-400 flex flex-col min-h-screen">
           <div className="grow">
             <div className="container px-8 py-5 lg:py-8 mx-auto xl:px-5 max-w-screen-lg">
-              {Nav()}
+              <Nav links={links} links_ar={links_ar} />
             </div>
             <div>
               <div className="container px-8 py-5 lg:py-8 mx-auto xl:px-5 max-w-screen-lg">
@@ -457,6 +456,27 @@ export async function getStaticProps(prop) {
             }
           }
         }
+        nav(handle: "main_nav") {
+          handle
+          title
+          tree {
+            page {
+              title
+              url
+            }
+          }
+        }
+        nav_ar:nav(handle: "main_nav") {
+          handle
+          title
+          tree(site: "arabic") {
+            page {
+              title
+              url
+              id
+            }
+          }
+        }
         news: entries(collection: "news", limit: 12) {
           total
           current_page
@@ -486,6 +506,8 @@ export async function getStaticProps(prop) {
   return {
     props: {
       data: data,
+      links:  data.nav.tree,
+      links_ar:  data.nav_ar.tree,
     },
   };
 }
